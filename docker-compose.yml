@@ -1,0 +1,79 @@
+name: owui-stack
+services:
+  openwebui:
+    # slim inage?
+    image: ghcr.io/open-webui/open-webui:v0.6.40
+    container_name: openwebui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    environment:
+      OPENAI_API_BASE_URL: http://litellm:4000/v1
+      OPENAI_API_KEY: sk-4IXi0D7oqaJkOGrbPbcDeg
+      ENABLE_OLLAMA_API: false
+      ENABLE_FORWARD_USER_INFO_HEADERS: true
+    volumes:
+      - openwebui_data:/app/backend/data
+    depends_on:
+      - litellm
+
+  litellm:
+    image: ghcr.io/berriai/litellm:v1.80.0-stable.1
+
+    container_name: litellm
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      DATABASE_URL: postgresql://litellm_user:litellm_password@postgres:5432/litellm
+      LITELLM_MASTER_KEY: sk-1234
+      LITELLM_SALT_KEY: sk-salt-1234
+      STORE_MODEL_IN_DB: "True"
+    command: ["--config", "/app/config.yaml"]
+
+    configs:
+      - source: litellm_config
+        target: /app/config.yaml
+    depends_on:
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: litellm
+      POSTGRES_USER: litellm_user
+      POSTGRES_PASSWORD: litellm_password
+    ports:
+      - "4432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U litellm_user -d litellm" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  openwebui_data:
+
+configs:
+  litellm_config:
+    content: |
+      general_settings:
+        store_prompts_in_spend_logs: true
+        user_header_mappings:
+          - header_name: 'X-OpenWebUI-User-Id'
+            litellm_user_role: internal_user
+          - header_name: 'X-OpenWebUI-User-Email'
+            litellm_user_role: end_user
+
+      litellm_settings:
+        set_verbose: true
+        extra_spend_tag_headers:
+          - "x-openwebui-user-id"
+          - "X-OpenWebUI-User-Id"
+          - "x-openwebui-user-email"
+          - "X-OpenWebUI-User-Role"
