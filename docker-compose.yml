@@ -68,12 +68,10 @@ configs:
           - header_name: 'X-OpenWebUI-User-Id'
             litellm_user_role: internal_user
           - header_name: 'X-OpenWebUI-User-Email'
-            litellm_user_role: end_user
+            litellm_user_role: customer
 
       litellm_settings:
         set_verbose: true
         extra_spend_tag_headers:
-          - "x-openwebui-user-id"
           - "X-OpenWebUI-User-Id"
-          - "x-openwebui-user-email"
-          - "X-OpenWebUI-User-Role"
+          - "X-OpenWebUI-User-Email"
