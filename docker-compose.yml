@@ -70,6 +70,9 @@ configs:
             litellm_user_role: customer
 
       litellm_settings:
+        default_internal_user_params:
+          max_budget: 10.0
+          budget_duration: weekly
         set_verbose: true
         extra_spend_tag_headers:
           - "X-OpenWebUI-User-Id"
