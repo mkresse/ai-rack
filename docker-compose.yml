@@ -1,8 +1,7 @@
 name: owui-stack
 services:
   openwebui:
-    # slim inage?
-    image: ghcr.io/open-webui/open-webui:v0.9.2
+    image: ghcr.io/open-webui/open-webui:v0.9.4
     container_name: openwebui
     restart: unless-stopped
     ports:
@@ -18,7 +17,7 @@ services:
       - litellm
 
   litellm:
-    image: ghcr.io/berriai/litellm:v1.83.14-stable.patch.2
+    image: ghcr.io/berriai/litellm:1.84.0-rc.1
     container_name: litellm
     restart: unless-stopped
     ports:
