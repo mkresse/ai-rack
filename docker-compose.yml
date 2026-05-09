@@ -18,6 +18,8 @@ services:
       DATABASE_NAME: owui
       DATABASE_USER: owui_user
       DATABASE_PASSWORD: ${OWUI_DB_PASS:-owui_pass}
+      DEFAULT_MODEL_PARAMS: |
+        { "function_calling" : "native" }
     volumes:
       - openwebui_data:/app/backend/data
     depends_on:
@@ -37,7 +39,7 @@ services:
       LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-1234}
       LITELLM_SALT_KEY: ${LITELLM_SALT_KEY:-sk-salt-1234}
       STORE_MODEL_IN_DB: "True"
-    command: ["--config", "/app/config.yaml"]
+    command: [ "--config", "/app/config.yaml" ]
 
     configs:
       - source: litellm_config
