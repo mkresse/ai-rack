@@ -1,4 +1,5 @@
-name: owui-stack
+name: ai-rack
+
 services:
   openwebui:
     image: ghcr.io/open-webui/open-webui:v0.9.4
@@ -8,7 +9,7 @@ services:
       - "3000:8080"
     environment:
       OPENAI_API_BASE_URL: http://litellm:4000/v1
-      OPENAI_API_KEY: sk-1234
+      OPENAI_API_KEY: ${LITELLM_MASTER_KEY:-sk-1234}
       ENABLE_OLLAMA_API: false
       ENABLE_FORWARD_USER_INFO_HEADERS: true
       DATABASE_TYPE: postgresql
@@ -16,7 +17,7 @@ services:
       DATABASE_PORT: 5432
       DATABASE_NAME: owui
       DATABASE_USER: owui_user
-      DATABASE_PASSWORD: owui_pass
+      DATABASE_PASSWORD: ${OWUI_DB_PASS:-owui_pass}
     volumes:
       - openwebui_data:/app/backend/data
     depends_on:
@@ -32,9 +33,9 @@ services:
     ports:
       - "4000:4000"
     environment:
-      DATABASE_URL: postgresql://litellm_user:litellm_pass@postgres:5432/litellm
-      LITELLM_MASTER_KEY: sk-1234
-      LITELLM_SALT_KEY: sk-salt-1234
+      DATABASE_URL: postgresql://litellm_user:${LITELLM_DB_PASS:-litellm_pass}@postgres:5432/litellm
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-1234}
+      LITELLM_SALT_KEY: ${LITELLM_SALT_KEY:-sk-salt-1234}
       STORE_MODEL_IN_DB: "True"
     command: ["--config", "/app/config.yaml"]
 
@@ -52,7 +53,7 @@ services:
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASS:-postgres}
     ports:
       - "4432:5432"
     volumes:
@@ -92,8 +93,8 @@ configs:
 
   pg_init_databases:
     content: |
-      CREATE USER owui_user WITH PASSWORD 'owui_pass';
-      CREATE USER litellm_user WITH PASSWORD 'litellm_pass';
+      CREATE USER owui_user WITH PASSWORD '${OWUI_DB_PASS:-owui_pass}';
+      CREATE USER litellm_user WITH PASSWORD '${LITELLM_DB_PASS:-litellm_pass}';
 
       CREATE DATABASE owui OWNER owui_user;
       CREATE DATABASE litellm OWNER litellm_user;
