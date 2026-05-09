@@ -11,10 +11,19 @@ services:
       OPENAI_API_KEY: sk-1234
       ENABLE_OLLAMA_API: false
       ENABLE_FORWARD_USER_INFO_HEADERS: true
+      DATABASE_TYPE: postgresql
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: owui
+      DATABASE_USER: owui_user
+      DATABASE_PASSWORD: owui_pass
     volumes:
       - openwebui_data:/app/backend/data
     depends_on:
-      - litellm
+      litellm:
+        condition: service_started
+      postgres:
+        condition: service_healthy
 
   litellm:
     image: ghcr.io/berriai/litellm:1.84.0-rc.1
@@ -23,7 +32,7 @@ services:
     ports:
       - "4000:4000"
     environment:
-      DATABASE_URL: postgresql://litellm_user:litellm_password@postgres:5432/litellm
+      DATABASE_URL: postgresql://litellm_user:litellm_pass@postgres:5432/litellm
       LITELLM_MASTER_KEY: sk-1234
       LITELLM_SALT_KEY: sk-salt-1234
       STORE_MODEL_IN_DB: "True"
@@ -41,9 +50,9 @@ services:
     container_name: postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: litellm
-      POSTGRES_USER: litellm_user
-      POSTGRES_PASSWORD: litellm_password
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - "4432:5432"
     volumes:
@@ -53,6 +62,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    configs:
+      - source: pg_init_databases
+        target: /docker-entrypoint-initdb.d/init-databases.sql
 
 volumes:
   postgres_data:
@@ -77,3 +89,11 @@ configs:
         extra_spend_tag_headers:
           - "X-OpenWebUI-User-Id"
           - "X-OpenWebUI-User-Email"
+
+  pg_init_databases:
+    content: |
+      CREATE USER owui_user WITH PASSWORD 'owui_pass';
+      CREATE USER litellm_user WITH PASSWORD 'litellm_pass';
+
+      CREATE DATABASE owui OWNER owui_user;
+      CREATE DATABASE litellm OWNER litellm_user;
