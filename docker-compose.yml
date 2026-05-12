@@ -20,6 +20,9 @@ services:
       DATABASE_PASSWORD: ${OWUI_DB_PASS:-owui_pass}
       DEFAULT_MODEL_PARAMS: |
         { "function_calling" : "native" }
+      ENABLE_WEB_SEARCH: true
+      WEB_SEARCH_ENGINE: duckduckgo
+      DDGS_BACKEND: google
     volumes:
       - openwebui_data:/app/backend/data
     depends_on:
