@@ -41,6 +41,7 @@ services:
       DATABASE_URL: postgresql://litellm_user:${LITELLM_DB_PASS:-litellm_pass}@postgres:5432/litellm
       LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-1234}
       LITELLM_SALT_KEY: ${LITELLM_SALT_KEY:-sk-salt-1234}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       STORE_MODEL_IN_DB: "True"
     command: [ "--config", "/app/config.yaml" ]
 
@@ -86,6 +87,19 @@ configs:
             litellm_user_role: internal_user
           - header_name: 'X-OpenWebUI-User-Email'
             litellm_user_role: customer
+
+      credential_list:
+        - credential_name: anthropic_credentials
+          credential_info:
+            custom_llm_provider: "Anthropic"
+          credential_values:
+            api_key: os.environ/ANTHROPIC_API_KEY
+
+      model_list:
+        - model_name: anthropic/*
+          litellm_params:
+            model: anthropic/*   
+            litellm_credential_name: anthropic_credentials
 
       litellm_settings:
         default_internal_user_params:
