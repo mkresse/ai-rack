@@ -2,7 +2,7 @@ name: ai-rack
 
 services:
   openwebui:
-    image: ghcr.io/open-webui/open-webui:v0.9.4
+    image: ghcr.io/open-webui/open-webui:v0.9.5
     container_name: openwebui
     restart: unless-stopped
     ports:
