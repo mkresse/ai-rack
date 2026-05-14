@@ -26,6 +26,11 @@ services:
       VECTOR_DB: pgvector
       PGVECTOR_DB_URL: postgresql://owui_user:${OWUI_DB_PASS:-owui_pass}@postgres:5432/vector
       PGVECTOR_CREATE_EXTENSION: false
+      RAG_EMBEDDING_MODEL: intfloat/multilingual-e5-small
+      RAG_TOP_K: 5
+      ENABLE_RAG_HYBRID_SEARCH: true
+      ENABLE_RAG_HYBRID_SEARCH_ENRICHED_TEXTS: true
+      HYBRID_BM25_WEIGHT: 0.3
     volumes:
       - openwebui_data:/app/backend/data
     depends_on:
