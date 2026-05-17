@@ -40,7 +40,7 @@ services:
         condition: service_healthy
 
   litellm:
-    image: ghcr.io/berriai/litellm:1.84.0
+    image: ghcr.io/berriai/litellm:1.85.0
     container_name: litellm
     restart: unless-stopped
     ports:
