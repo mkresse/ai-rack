@@ -2,7 +2,7 @@ name: ai-rack
 
 services:
   openwebui:
-    image: ghcr.io/open-webui/open-webui:v0.9.5
+    image: ghcr.io/open-webui/open-webui:v0.9.6
     container_name: openwebui
     restart: unless-stopped
     ports:
@@ -47,7 +47,7 @@ services:
         condition: service_healthy
 
   litellm:
-    image: ghcr.io/berriai/litellm:1.86.2
+    image: ghcr.io/berriai/litellm:1.87.0
     container_name: litellm
     restart: unless-stopped
     ports:
