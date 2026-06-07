@@ -1,4 +1,9 @@
 .idea
 *.iml
-.env.local
-.env
+
+# secrets — never commit
+.env*
+!.env.example
+
+# rendered all-in-one compose files contain fully-interpolated secrets
+docker-compose.rendered.yml

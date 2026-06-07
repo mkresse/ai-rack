@@ -88,11 +88,46 @@ services:
       - source: pg_init_databases
         target: /docker-entrypoint-initdb.d/init-databases.sql
 
+  caddy:
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM caddy:2.11.4-builder AS builder
+        RUN xcaddy build v2.11.4 --with github.com/caddy-dns/hetzner/v2@v2.0.1
+        FROM caddy:2.11.4
+        COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+    container_name: caddy
+    ports:
+      - "8443:8443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+    restart: unless-stopped
+    depends_on:
+      openwebui:
+        condition: service_started
+
 volumes:
   postgres_data:
   openwebui_data:
+  caddy_data:
+  caddy_config:
 
 configs:
+  caddyfile:
+    content: |
+      {
+      	https_port 8443
+      }
+
+      localhost:8443 {
+      	reverse_proxy openwebui:8080
+      	tls internal
+      }
+
   litellm_config:
     content: |
       general_settings:

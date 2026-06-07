@@ -1,0 +1,41 @@
+# Home-server overlay: gives caddy its own LAN IP via macvlan, so it shows up as a
+# standalone host on the network. Needs a real NIC (CADDY_MACVLAN_PARENT)
+#
+# Render the merged result:
+#   docker compose -f docker-compose.yml -f docker-compose.homeserver.yml config
+
+services:
+  caddy:
+    # Reachable on its own macvlan IP at :80/:443 — no need to publish host ports.
+    ports: !reset [ ]
+    environment:
+      - HETZNER_API_TOKEN=${HETZNER_API_TOKEN}
+    networks:
+      caddy-net:
+        ipv4_address: ${CADDY_IP:-192.168.1.200}
+      default: { }
+
+# Production Caddyfile: replaces the localhost-only one from the base file
+configs:
+  caddyfile:
+    content: |
+      ${CADDY_DOMAIN} {
+      	reverse_proxy openwebui:8080
+
+      	tls {
+      		dns hetzner {env.HETZNER_API_TOKEN}
+      		dns_challenge_override_domain _acme-challenge.${CADDY_ACME_DELEGATION_ZONE}
+      		propagation_delay 1m
+      	}
+      }
+
+networks:
+  caddy-net:
+    name: ai-rack-net
+    driver: macvlan
+    driver_opts:
+      parent: ${CADDY_MACVLAN_PARENT:-eth0}
+    ipam:
+      config:
+        - subnet: ${CADDY_MACVLAN_SUBNET:-192.168.1.0/24}
+          gateway: ${CADDY_MACVLAN_GATEWAY:-192.168.1.1}
