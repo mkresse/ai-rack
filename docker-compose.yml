@@ -38,6 +38,13 @@ services:
       AUDIO_TTS_MISTRAL_API_BASE_URL: https://api.mistral.ai/v1
       AUDIO_TTS_MODEL: voxtral-mini-tts-2603
       AUDIO_TTS_VOICE: gb_oliver_excited
+      # Image generation
+      ENABLE_IMAGE_GENERATION: true
+      IMAGE_GENERATION_ENGINE: openai
+      IMAGES_OPENAI_API_BASE_URL: http://litellm:4000/v1
+      IMAGES_OPENAI_API_KEY: ${LITELLM_MASTER_KEY:-sk-1234}
+      IMAGE_GENERATION_MODEL: fal_ai/fal-ai/flux/schnell
+      IMAGE_SIZE: 1024x1024
     volumes:
       - openwebui_data:/app/backend/data
     depends_on:
@@ -57,6 +64,7 @@ services:
       LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-1234}
       LITELLM_SALT_KEY: ${LITELLM_SALT_KEY:-sk-salt-1234}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      FAL_AI_API_KEY: ${FAL_AI_API_KEY}
       STORE_MODEL_IN_DB: "True"
     command: [ "--config", "/app/config.yaml" ]
 
@@ -144,12 +152,25 @@ configs:
             custom_llm_provider: "Anthropic"
           credential_values:
             api_key: os.environ/ANTHROPIC_API_KEY
+        - credential_name: fal_ai_credentials
+          credential_info:
+            custom_llm_provider: "fal_ai"
+          credential_values:
+            api_key: os.environ/FAL_AI_API_KEY
 
       model_list:
         - model_name: anthropic/*
           litellm_params:
-            model: anthropic/*   
+            model: anthropic/*
             litellm_credential_name: anthropic_credentials
+        - model_name: fal_ai/fal-ai/flux/schnell
+          litellm_params:
+            model: fal_ai/fal-ai/flux/schnell
+            litellm_credential_name: fal_ai_credentials
+        - model_name: fal_ai/fal-ai/gemini-25-flash-image
+          litellm_params:
+            model: fal_ai/fal-ai/gemini-25-flash-image
+            litellm_credential_name: fal_ai_credentials
 
       litellm_settings:
         default_internal_user_params:

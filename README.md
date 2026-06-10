@@ -58,6 +58,7 @@ All secrets are kept in `.env` (git-ignored). See `.env.example` for the full li
 | `POSTGRES_PASS` | Password for the PostgreSQL superuser (`postgres`) |
 | `OWUI_DB_PASS` | Password for the `owui_user` database role |
 | `LITELLM_DB_PASS` | Password for the `litellm_user` database role |
+| `FAL_AI_API_KEY` | fal.ai API key for image generation models |
 | `CADDY_DOMAIN` | Public domain Caddy serves (e.g. `ai.example.com`) |
 | `CADDY_ACME_DELEGATION_ZONE` | DNS zone where the ACME TXT record is written (see [TLS](#tls-via-dns-01-delegation)) |
 | `HETZNER_API_TOKEN` | Hetzner DNS API token used by Caddy for the DNS-01 challenge |
@@ -133,6 +134,7 @@ The following features are pre-configured in `docker-compose.yml` and work out o
 
 - **User spend tracking** — Per-user budget enforcement and spend logging via LiteLLM, with Open WebUI user identity forwarded through headers.
 - **Multi-provider LLM access** — Anthropic models via wildcard routing (`anthropic/*`), with credentials managed through LiteLLM's credential system. Additional models stored in DB.
+- **Image generation** — fal.ai models (`fal_ai/fal-ai/flux/schnell`, `fal_ai/fal-ai/gemini-25-flash-image`) routed through LiteLLM. Open WebUI's OpenAI image engine points at LiteLLM, defaulting to flux/schnell at 1024×1024 (`FAL_AI_API_KEY` required). Note: LiteLLM only routes fal models it has an explicit transformation for (flux/schnell, gemini-25-flash-image/nano-banana, imagen4, recraft, flux-pro, bytedance/seedream, ideogram, stable-diffusion); other fal endpoints (e.g. flux-2) and **image editing** are not supported via the OpenAI image API.
 - **Web Search** — Google search via the DDGS library, enabled for all chats.
 - **RAG** — pgvector-backed retrieval-augmented generation with hybrid BM25+vector search using `intfloat/multilingual-e5-small` embeddings (multilingual, including German).
 - **Text-to-Speech** — Mistral Voxtral TTS (`voxtral-mini-tts-2603`) via the Mistral API. Users can override the admin default voice in their personal Open WebUI settings.
