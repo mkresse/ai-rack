@@ -163,6 +163,11 @@ configs:
           litellm_params:
             model: anthropic/*
             litellm_credential_name: anthropic_credentials
+            cache_control_injection_points:
+              - location: message
+                role: system
+              - location: message
+                index: -1
         - model_name: fal_ai/fal-ai/flux/schnell
           litellm_params:
             model: fal_ai/fal-ai/flux/schnell
