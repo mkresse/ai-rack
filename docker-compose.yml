@@ -64,6 +64,7 @@ services:
       LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:-sk-1234}
       LITELLM_SALT_KEY: ${LITELLM_SALT_KEY:-sk-salt-1234}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      REQUESTY_API_KEY: ${REQUESTY_API_KEY}
       FAL_AI_API_KEY: ${FAL_AI_API_KEY}
       STORE_MODEL_IN_DB: "True"
     command: [ "--config", "/app/config.yaml" ]
@@ -168,6 +169,11 @@ configs:
                 role: system
               - location: message
                 index: -1
+        - model_name: requesty/*
+          litellm_params:
+            model: openai/* 
+            api_base: https://router.eu.requesty.ai/v1
+            api_key: "os.environ/REQUESTY_API_KEY"
         - model_name: fal_ai/fal-ai/flux/schnell
           litellm_params:
             model: fal_ai/fal-ai/flux/schnell
