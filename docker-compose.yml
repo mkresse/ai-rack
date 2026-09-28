@@ -10,6 +10,7 @@ services:
     environment:
       OPENAI_API_BASE_URL: http://litellm:4000/v1
       OPENAI_API_KEY: ${LITELLM_MASTER_KEY:-sk-1234}
+      WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY}
       ENABLE_OLLAMA_API: false
       ENABLE_FORWARD_USER_INFO_HEADERS: true
       DATABASE_TYPE: postgresql
