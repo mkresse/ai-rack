@@ -165,11 +165,10 @@ configs:
           litellm_params:
             model: anthropic/*
             litellm_credential_name: anthropic_credentials
-            cache_control_injection_points:
-              - location: message
-                role: system
-              - location: message
-                index: -1
+            thinking:
+              type: adaptive
+              display: summarized
+            additional_drop_params: ["temperature", "top_p", "top_k"]
         - model_name: requesty/*
           litellm_params:
             model: openai/* 
@@ -189,6 +188,7 @@ configs:
           max_budget: 10.0
           budget_duration: weekly
         set_verbose: true
+        enable_anthropic_prompt_caching: true
         include_cost_in_streaming_usage: true
         extra_spend_tag_headers:
           - "X-OpenWebUI-User-Id"
