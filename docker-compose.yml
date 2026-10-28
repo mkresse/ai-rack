@@ -68,6 +68,7 @@ services:
       REQUESTY_API_KEY: ${REQUESTY_API_KEY}
       FAL_AI_API_KEY: ${FAL_AI_API_KEY}
       STORE_MODEL_IN_DB: "True"
+      LITELLM_DISABLE_NO_REDIS_WARNING: "True"
     command: [ "--config", "/app/config.yaml" ]
 
     configs:
@@ -141,6 +142,8 @@ configs:
   litellm_config:
     content: |
       general_settings:
+        # set to false for initial setup 
+        disable_env_credential_login: true
         store_prompts_in_spend_logs: true
         user_header_mappings:
           - header_name: 'X-OpenWebUI-User-Id'
