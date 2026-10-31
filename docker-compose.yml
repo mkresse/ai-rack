@@ -55,7 +55,7 @@ services:
         condition: service_healthy
 
   litellm:
-    image: ghcr.io/berriai/litellm:1.106.5
+    image: ghcr.io/berriai/litellm:1.106.6
     container_name: litellm
     restart: unless-stopped
     ports:
@@ -103,9 +103,9 @@ services:
     build:
       context: .
       dockerfile_inline: |
-        FROM caddy:2.11.4-builder AS builder
-        RUN xcaddy build v2.11.4 --with github.com/caddy-dns/hetzner/v2@v2.0.1
-        FROM caddy:2.11.4
+        FROM caddy:2.11.7-builder AS builder
+        RUN xcaddy build v2.11.7 --with github.com/caddy-dns/hetzner/v2@v2.0.1
+        FROM caddy:2.11.7
         COPY --from=builder /usr/bin/caddy /usr/bin/caddy
     container_name: caddy
     ports:
